@@ -1,9 +1,9 @@
 /**
- * Lab 2: An inventory control program that implements stacks to allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 3: An inventory control program that implements stacks, queues, and lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date February 29th, 2024
- * @version 1.0
+ * @date March 14th, 2024
+ * @version 1.2
  */
 
 public class TV {

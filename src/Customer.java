@@ -1,23 +1,45 @@
 /**
- * Lab 2: An inventory control program that implements stacks to allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 3: An inventory control program that implements stacks, queues, and lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date February 29th, 2024
- * @version 1.0
+ * @date March 14th, 2024
+ * @version 1.2
  */
 
 import java.util.ArrayList;
 
 public class Customer {
 
+    // default constructor
     public Customer() {
+        this.name = "Sir Placeholder";
+        this.account_number = "ABC123";
+        this.number_purchased = 0;
+        this.id_purchased = null;
+        this.cost_purchased = 0;
     }
 
-    public Customer(String name, String account_number, int number_purchased, ArrayList<TV> id_purchased){
+    // constructor
+    public Customer(String name, String account_number, int number_purchased, ArrayList<TV> id_purchased) {
         this.name = name;
         this.account_number = account_number;
         this.number_purchased = number_purchased;
         this.id_purchased = id_purchased;
+        this.cost_purchased = number_purchased * 199.95 * 1.06;
+
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder receipt = new StringBuilder();
+        receipt.append(String.format("Checkout Receipt:" + "%nCustomer: %s" + "%nAccount Number: %s" + "%nPurchased %d TVs for $%.2f", this.getName(), this.getAccount_number(), this.getNumber_purchased(), this.getCost_purchased()));
+
+        for (TV tv : this.getId_purchased()) {
+            receipt.append(String.format("%nTV ID Purchased is: %s", tv.getId_number()));
+        }
+
+        return receipt.toString();
 
     }
 
@@ -46,8 +68,7 @@ public class Customer {
     }
 
     public double getCost_purchased() {
-        cost_purchased = this.number_purchased*199.95*1.06;
-        return cost_purchased;
+        return this.cost_purchased;
     }
 
     public void setCost_purchased(double cost_purchased) {

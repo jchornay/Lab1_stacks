@@ -1,9 +1,9 @@
 /**
- * Lab 2: An inventory control program that implements stacks to allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 3: An inventory control program that implements stacks, queues, and lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date February 29th, 2024
- * @version 1.0
+ * @date March 14th, 2024
+ * @version 1.2
  */
 
 import java.io.FileNotFoundException;
@@ -19,7 +19,7 @@ public class Main implements InventoryMenu {
 
     public static void main(String[] args) {
 
-        showHeader(2, "Queues", "TV Inventory Control Program");
+        showHeader(3, "Lists", "TV Inventory Control Program");
 
         boolean loop = true;
 
@@ -111,7 +111,7 @@ public class Main implements InventoryMenu {
                 }
 
                 case InventoryMenu.CUSTOMER_PURCHASE -> {
-                    if (stack.size()>0){
+                    if (stack.size() > 0) {
 
                         System.out.printf("Please enter the customer name: ");
                         String temp_name = input.nextLine();
@@ -121,7 +121,7 @@ public class Main implements InventoryMenu {
                         boolean purchase_loop = true;
                         int quantity = 0;
 
-                        while(purchase_loop){
+                        while (purchase_loop) {
 
                             System.out.printf("Please enter the number of TV's purchased: ");
 
@@ -131,8 +131,8 @@ public class Main implements InventoryMenu {
                                 if (quantity > stack.size()) {
                                     System.out.printf("Error - Not enough TV's left in inventory!");
                                     System.out.printf("%nTV's left in inventory: %d. You purchased: %d. Try again.%n", stack.size(), quantity);
-                                } else if (quantity > 0 && quantity <= stack.size()){
-                                    purchase_loop=false;
+                                } else if (quantity > 0 && quantity <= stack.size()) {
+                                    purchase_loop = false;
                                 } else {
                                     throw new NumberFormatException();
                                 }
@@ -147,7 +147,7 @@ public class Main implements InventoryMenu {
 
                         System.out.printf("%nCustomer %s purchased the following TV's:%n", temp_name);
 
-                        for(int i = 0; i<quantity; i++){
+                        for (int i = 0; i < quantity; i++) {
                             System.out.println(stack.peek());
                             temp_list.add(stack.pop());
                         }
@@ -164,19 +164,11 @@ public class Main implements InventoryMenu {
                 }
 
                 case InventoryMenu.CUSTOMER_CHECKOUT -> {
-                    if(queue.isEmpty()){
+                    if (queue.isEmpty()) {
                         System.out.printf("There are no customers left to check out!%n%n");
                     } else {
                         Customer current_customer = queue.poll();
-
-                        System.out.printf("Checkout Receipt:" +
-                                "%nCustomer: %s" +
-                                "%nAccount Number: %s" +
-                                "%nPurchased %d TVs for $%.2f", current_customer.getName(), current_customer.getAccount_number(), current_customer.getNumber_purchased(), current_customer.getCost_purchased());
-                        for(TV tv:current_customer.getId_purchased()){
-                            System.out.printf("%nTV ID Purchased is: %s", tv.getId_number());
-                        }
-
+                        System.out.printf(current_customer.toString());
 
                         System.out.printf("%n%nThere are %d customers left to check out.%n%n", queue.size());
 
@@ -238,23 +230,7 @@ public class Main implements InventoryMenu {
 
     public static int displayMenu() throws NumberFormatException {
 
-        System.out.printf("Menu Options" +
-                        "%n%d - Stock Shelves" +
-                        "%n%d - Fill Web Order" +
-                        "%n%d - Restock Return" +
-                        "%n%d - Restock Inventory" +
-                        "%n%d - Customer Purchase" +
-                        "%n%d - Customer Checkout" +
-                        "%n%d - Display Inventory" +
-                        "%n%d - End Program",
-                InventoryMenu.STOCK_SHELVES,
-                InventoryMenu.FILL_ORDER,
-                InventoryMenu.RESTOCK_RETURN,
-                InventoryMenu.RESTOCK_INVENTORY,
-                InventoryMenu.CUSTOMER_PURCHASE,
-                InventoryMenu.CUSTOMER_CHECKOUT,
-                InventoryMenu.DISPLAY_INVENTORY,
-                InventoryMenu.END);
+        System.out.printf("Menu Options" + "%n%d - Stock Shelves" + "%n%d - Fill Web Order" + "%n%d - Restock Return" + "%n%d - Restock Inventory" + "%n%d - Customer Purchase" + "%n%d - Customer Checkout" + "%n%d - Display Inventory" + "%n%d - End Program", InventoryMenu.STOCK_SHELVES, InventoryMenu.FILL_ORDER, InventoryMenu.RESTOCK_RETURN, InventoryMenu.RESTOCK_INVENTORY, InventoryMenu.CUSTOMER_PURCHASE, InventoryMenu.CUSTOMER_CHECKOUT, InventoryMenu.DISPLAY_INVENTORY, InventoryMenu.END);
 
         Scanner input = new Scanner(System.in);
         int result = 0;
@@ -289,7 +265,7 @@ public class Main implements InventoryMenu {
 
         System.out.printf("Lab %d: %s%n", labNum, labName);
         System.out.println("Copyright ©2024 - Howard Community College. All rights reserved; Unauthorized duplication prohibited");
-        System.out.printf("%nCMSY 265 %s%n%n", labTitle);
+        System.out.printf("CMSY 265 %s%n%n", labTitle);
 
     }
 

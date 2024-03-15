@@ -1,5 +1,5 @@
 /**
- * Lab 3: An inventory control program that implements stacks, queues, and lists in order to allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 3: An inventory control program that implements stacks, queues, and iterable lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
  * @date March 14th, 2024
@@ -18,10 +18,12 @@ public class TV {
         this.id_number = id_number;
     }
 
+    // default constructor
     public TV() {
         this.id_number = null;
     }
 
+    // full constructor
     public TV(String id_number) {
         this.id_number = id_number;
     }

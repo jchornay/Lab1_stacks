@@ -1,25 +1,36 @@
 /**
- * Lab 3: An inventory control program that implements stacks, queues, and lists in order to allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 3: An inventory control program that implements stacks, queues, and iterable lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
  * @date March 14th, 2024
  * @version 1.2
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Customer {
+public class Customer implements Serializable {
 
     // default constructor
     public Customer() {
         this.name = "Sir Placeholder";
-        this.account_number = "ABC123";
+        this.account_number = "ABC123-00";
         this.number_purchased = 0;
         this.id_purchased = null;
         this.cost_purchased = 0;
     }
 
-    // constructor
+    // partial constructor
+    public Customer(String name, String account_number) {
+        this.name = name;
+        this.account_number = account_number;
+        this.number_purchased = 0;
+        this.id_purchased = null;
+        this.cost_purchased = 0;
+
+    }
+
+    // full constructor
     public Customer(String name, String account_number, int number_purchased, ArrayList<TV> id_purchased) {
         this.name = name;
         this.account_number = account_number;
@@ -30,13 +41,24 @@ public class Customer {
     }
 
     @Override
+    // uses stringbuilder to build customer receipt and return as string
     public String toString() {
 
         StringBuilder receipt = new StringBuilder();
-        receipt.append(String.format("Checkout Receipt:" + "%nCustomer: %s" + "%nAccount Number: %s" + "%nPurchased %d TVs for $%.2f", this.getName(), this.getAccount_number(), this.getNumber_purchased(), this.getCost_purchased()));
+        receipt.append(String.format("*** CHECKOUT RECEIPT ***" + "%n\tCustomer: %s" + "%n\tAccount Number: %s", this.getName(), this.getAccount_number()));
 
-        for (TV tv : this.getId_purchased()) {
-            receipt.append(String.format("%nTV ID Purchased is: %s", tv.getId_number()));
+        // checks if any purchases have been made
+        if (this.getId_purchased() == null) {
+
+            receipt.append(String.format("%nNo TV's purchased!"));
+
+        } else {
+
+            receipt.append(String.format("%nPurchased %d TVs for $%.2f", this.getNumber_purchased(), this.getCost_purchased()));
+
+            for (TV tv : this.getId_purchased()) {
+                receipt.append(String.format("%nTV ID Purchased is: %s", tv.getId_number()));
+            }
         }
 
         return receipt.toString();

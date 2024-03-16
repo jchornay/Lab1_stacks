@@ -2,7 +2,7 @@
  * Lab 3: An inventory control program that implements stacks, queues, and iterable lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 14th, 2024
+ * @date March 15th, 2024
  * @version 1.2
  */
 
@@ -77,6 +77,26 @@ public class CustomerData implements Iterable<Customer>, Serializable {
         }
     }
 
+    // method to add new customer to list IF ACCOUNT NUMBER IS PROVIDED BUT NAME DOES NOT EXIST
+    public void addCustomer(String account) {
+
+        // takes two strings for account name and number
+        Scanner input = new Scanner(System.in);
+        System.out.print("New account name: ");
+        String name = input.nextLine();
+
+        // creates a new customer object with name and account number
+        Customer customer = new Customer(name, account);
+
+        // confirms selection
+        if (confirmSelection(customer)) {
+            this.list.add(customer);
+            System.out.printf("Account created.%n%n");
+        } else {
+            System.out.printf("Action cancelled.%n%n");
+        }
+    }
+
 
     // method to remove existing customer from list
     public void removeCustomer() {
@@ -96,7 +116,8 @@ public class CustomerData implements Iterable<Customer>, Serializable {
 
             // does not exit loop until a valid account number is entered
             if (customer == null) {
-                System.out.printf("Account does not exist!%n");
+                System.out.printf("Account does not exist!%n%n");
+                this.displayList();
             } else {
                 loop = false;
             }
@@ -130,7 +151,8 @@ public class CustomerData implements Iterable<Customer>, Serializable {
 
             // does not exit loop until a valid account number is entered
             if (customer == null) {
-                System.out.printf("Account does not exist!%n");
+                System.out.printf("Account does not exist!%n%n");
+                this.displayList();
             } else {
                 loop = false;
             }
@@ -174,7 +196,7 @@ public class CustomerData implements Iterable<Customer>, Serializable {
     public void displayList() {
 
         int index = 0;
-        System.out.println("***CUSTOMER LIST***");
+        System.out.println("*** CUSTOMER LIST ***");
 
         // prints out formatted customer list
         for (Customer customer : this.list) {

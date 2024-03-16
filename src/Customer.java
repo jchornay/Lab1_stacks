@@ -2,7 +2,7 @@
  * Lab 3: An inventory control program that implements stacks, queues, and iterable lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 14th, 2024
+ * @date March 15th, 2024
  * @version 1.2
  */
 
@@ -44,6 +44,8 @@ public class Customer implements Serializable {
     // uses stringbuilder to build customer receipt and return as string
     public String toString() {
 
+        this.setCost_purchased(this.number_purchased * 199.95 * 1.06);
+
         StringBuilder receipt = new StringBuilder();
         receipt.append(String.format("*** CHECKOUT RECEIPT ***" + "%n\tCustomer: %s" + "%n\tAccount Number: %s", this.getName(), this.getAccount_number()));
 
@@ -54,7 +56,8 @@ public class Customer implements Serializable {
 
         } else {
 
-            receipt.append(String.format("%nPurchased %d TVs for $%.2f", this.getNumber_purchased(), this.getCost_purchased()));
+            receipt.append(String.format("%n*** PURCHASE ***" + "%n%d TVs for $%.2f", this.getNumber_purchased(),
+                    this.getCost_purchased()));
 
             for (TV tv : this.getId_purchased()) {
                 receipt.append(String.format("%nTV ID Purchased is: %s", tv.getId_number()));

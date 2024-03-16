@@ -2,7 +2,7 @@
  * Lab 3: An inventory control program that implements stacks, queues, and iterable lists in order to allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 14th, 2024
+ * @date March 15th, 2024
  * @version 1.2
  */
 
@@ -13,9 +13,10 @@ public interface InventoryMenu {
     int FILL_ORDER = 2;
     int RESTOCK_RETURN = 3;
     int RESTOCK_INVENTORY = 4;
-    int CUSTOMER_PURCHASE = 5;
-    int CUSTOMER_CHECKOUT = 6;
-    int CUSTOMER_UPDATE = 7;
+
+    int CUSTOMER_UPDATE = 5;
+    int CUSTOMER_PURCHASE = 6;
+    int CUSTOMER_CHECKOUT = 7;
     int DISPLAY_INVENTORY = 8;
     int END = 9;
     int STOCKING_QUANTITY = 5;

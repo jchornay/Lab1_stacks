@@ -16,6 +16,10 @@ import java.util.*;
 
 public class Main implements InventoryMenu {
 
+    //TODO add method that takes CustomerData list as parameter and returns it sorted. first, take list, then call
+    // the .toArray function from CustomerData class. sort the array using a recursive method (insertion sort?) check
+    // old assignments. convert back to list. add sorting function to appropriate menu items
+
     public static void main(String[] args) {
 
         showHeader(4, "Recursion", "TV Inventory Control Program");
@@ -51,7 +55,7 @@ public class Main implements InventoryMenu {
         // initiates queue of customer objects
         Queue<Customer> customerQueue = new LinkedList<>();
 
-        //  counter for something secret
+        //  flag for when a customer specific action is initiated from main menu
         int globalChangeCount = 0;
 
         // main loop
@@ -176,20 +180,15 @@ public class Main implements InventoryMenu {
                     } else {
                         System.out.printf("There are no TVs left in inventory!%n%n");
                     }
-
                 }
 
                 case InventoryMenu.CUSTOMER_CHECKOUT -> {
                     if (customerQueue.isEmpty()) {
                         System.out.printf("There are no customers left to check out!%n%n");
                     } else {
-                        Customer current_customer = customerQueue.poll();
-                        System.out.printf(current_customer.toString());
-
+                        System.out.printf(customerQueue.poll().toString());
                         System.out.printf("%n%nThere are %d customers left to check out.%n%n", customerQueue.size());
-
                     }
-
                 }
 
                 case InventoryMenu.CUSTOMER_UPDATE -> {
@@ -268,8 +267,7 @@ public class Main implements InventoryMenu {
                     // uses the inherent toString() method to show TV's left in stack
                     System.out.printf("The following %d TVs are left in inventory:%n", tvStack.size());
                     for (TV tv : tvStack) {
-                        System.out.print(tv);
-                        System.out.println();
+                        System.out.printf("\t" + tv + "%n");
                     }
                     System.out.println();
                 }

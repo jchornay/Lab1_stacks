@@ -15,6 +15,9 @@ import java.util.Scanner;
 
 public class CustomerData implements Iterable<Customer>, Serializable {
 
+    //TODO use toArray method, take customer list as argument and return list of objects. cast the objects to type
+    // Customer and place into array. return customer array
+
     // method to add new customer to list, returns account number as string
     public String addCustomer() {
 

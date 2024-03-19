@@ -1,9 +1,11 @@
 /**
- * Lab 3: An inventory control program that implements stacks, queues, and iterable lists in order to allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
+ * the user
+ * to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 15th, 2024
- * @version 1.2
+ * @date March 18th, 2024
+ * @version 1.3
  */
 
 public interface InventoryMenu {
@@ -13,15 +15,16 @@ public interface InventoryMenu {
     int FILL_ORDER = 2;
     int RESTOCK_RETURN = 3;
     int RESTOCK_INVENTORY = 4;
-
     int CUSTOMER_UPDATE = 5;
     int CUSTOMER_PURCHASE = 6;
     int CUSTOMER_CHECKOUT = 7;
     int DISPLAY_INVENTORY = 8;
     int END = 9;
+
+    // quantity used in STOCK_SHELVES action
     int STOCKING_QUANTITY = 5;
 
-    // customer submenu options
+    // customer submenu variables
     int ADD_CUSTOMER = 1;
     int DELETE_CUSTOMER = 2;
     int UPDATE_CUSTOMER = 3;

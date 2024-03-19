@@ -1,15 +1,19 @@
 /**
- * Lab 3: An inventory control program that implements stacks, queues, and iterable lists in order to allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
+ * the user
+ * to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 15th, 2024
- * @version 1.2
+ * @date March 18th, 2024
+ * @version 1.3
  */
 
 public class TV {
 
+    // TV id number
     private String id_number;
 
+    // getter and setter
     public String getId_number() {
         return id_number;
     }
@@ -28,8 +32,9 @@ public class TV {
         this.id_number = id_number;
     }
 
+    // toString
     @Override
     public String toString(){
-        return "The TV id number is: " + this.id_number;
+        return "TV id number: " + this.id_number;
     }
 }

@@ -1,11 +1,10 @@
 /**
  * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
- * the user
- * to check inventory and make changes at a TV warehouse.
+ * the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 18th, 2024
- * @version 1.3
+ * @date March 21st, 2024
+ * @version 1.4
  */
 
 public class TV {

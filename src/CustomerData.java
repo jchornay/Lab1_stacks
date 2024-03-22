@@ -1,23 +1,20 @@
 /**
  * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
- * the user
- * to check inventory and make changes at a TV warehouse.
+ * the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 18th, 2024
- * @version 1.3
+ * @date March 21st, 2024
+ * @version 1.4
  */
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class CustomerData implements Iterable<Customer>, Serializable {
-
-    //TODO use toArray method, take customer list as argument and return list of objects. cast the objects to type
-    // Customer and place into array. return customer array
-
     // method to add new customer to list, returns account number as string
     public String addCustomer() {
 
@@ -192,6 +189,17 @@ public class CustomerData implements Iterable<Customer>, Serializable {
             System.out.printf("Account No.: %s%n", customer.getAccount_number());
         }
         System.out.println();
+    }
+
+    public Customer[] toCustomerArray(){
+        // creates empty object and customer arrays
+        Object[] objectArray = this.getList().toArray();
+         Customer[] customerArray = new Customer[this.getList().size()];
+         // itereates through object array and casts each Object to type Customer
+         for(int i = 0; i<this.getList().size(); i++){
+            customerArray[i] = (Customer) objectArray[i];
+         }
+         return customerArray;
     }
 
     // private method used internally to confirm account actions

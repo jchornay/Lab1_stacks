@@ -1,11 +1,10 @@
 /**
  * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
- * the user
- * to check inventory and make changes at a TV warehouse.
+ * the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 18th, 2024
- * @version 1.3
+ * @date March 21st, 2024
+ * @version 1.4
  */
 
 import java.io.IOException;
@@ -15,11 +14,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Main implements InventoryMenu {
-
-    //TODO add method that takes CustomerData list as parameter and returns it sorted. first, take list, then call
-    // the .toArray function from CustomerData class. sort the array using a recursive method (insertion sort?) check
-    // old assignments. convert back to list. add sorting function to appropriate menu items
-
     public static void main(String[] args) {
 
         showHeader(4, "Recursion", "TV Inventory Control Program");
@@ -49,14 +43,18 @@ public class Main implements InventoryMenu {
             }
         }
 
+        // TODO: prompt user for filepath in case it varies from custfile.txt
         // initiates CustomerData object by calling static method to open file
         CustomerData customerDataList = openCustFile("custfile.txt");
+        // sorts list in ascending order
+        customerDataList.setList(insertSortHelper(customerDataList));
 
         // initiates queue of customer objects
         Queue<Customer> customerQueue = new LinkedList<>();
 
-        //  flag for when a customer specific action is initiated from main menu
-        int globalChangeCount = 0;
+        // NOTE: globalChangeCount made redundant after requiring a save after each new customer
+        // flag for when a customer specific action is initiated from main menu
+        //int globalChangeCount = 0;
 
         // main loop
         while (loop) {
@@ -131,11 +129,21 @@ public class Main implements InventoryMenu {
                         if (accountNumberInput.equalsIgnoreCase("none")) {
                             System.out.println("*** ADD CUSTOMER ***");
                             accountNumberInput = customerDataList.addCustomer();
-                            globalChangeCount++;
+                            // sorts list in ascending order following edit
+                            customerDataList.setList(insertSortHelper(customerDataList));
+                            // requires list to be saved to file before proceeding
+                            saveCustFile(customerDataList);
+                            // NOTE: globalChangeCount made redundant after requiring a save after each new customer
+                            //globalChangeCount++;
                         } else if (customerDataList.findCustomer(accountNumberInput) == null) {
                             System.out.println("*** NO MATCH FOUND - ADD CUSTOMER ***");
                             customerDataList.addCustomer(accountNumberInput);
-                            globalChangeCount++;
+                            // sorts list in ascending order following edit
+                            customerDataList.setList(insertSortHelper(customerDataList));
+                            // requires list to be saved to file before proceeding
+                            saveCustFile(customerDataList);
+                            // NOTE: globalChangeCount made redundant after requiring a save after each new customer
+                            //globalChangeCount++;
                         }
 
                         Customer customer = customerDataList.findCustomer(accountNumberInput);
@@ -203,18 +211,24 @@ public class Main implements InventoryMenu {
                             case InventoryMenu.ADD_CUSTOMER -> {
                                 System.out.println("*** ADD CUSTOMER ***");
                                 customerDataList.addCustomer();
+                                // sorts list in ascending order following edit
+                                customerDataList.setList(insertSortHelper(customerDataList));
                                 localChangeCount++;
                             }
 
                             case InventoryMenu.DELETE_CUSTOMER -> {
                                 System.out.println("*** DELETE CUSTOMER ***");
                                 customerDataList.removeCustomer();
+                                // sorts list in ascending order following edit
+                                customerDataList.setList(insertSortHelper(customerDataList));
                                 localChangeCount++;
                             }
 
                             case InventoryMenu.UPDATE_CUSTOMER -> {
                                 System.out.println("*** UPDATE CUSTOMER ***");
                                 customerDataList.updateName();
+                                // sorts list in ascending order following edit
+                                customerDataList.setList(insertSortHelper(customerDataList));
                                 localChangeCount++;
                             }
 
@@ -222,12 +236,15 @@ public class Main implements InventoryMenu {
 
                                 saveCustFile(customerDataList);
 
-                                globalChangeCount = 0;
+                                // NOTE: globalChangeCount made redundant after requiring a save after each new customer
+                                //globalChangeCount = 0;
                                 localChangeCount = 0;
                             }
 
                             case InventoryMenu.DISPLAY_LIST -> {
+
                                 customerDataList.displayList();
+
                             }
                             case InventoryMenu.RETURN_TO_MAIN -> {
 
@@ -276,31 +293,6 @@ public class Main implements InventoryMenu {
                     if (customerQueue.isEmpty()) {
 
                         loop = false;
-
-                        if (globalChangeCount > 0) {
-
-                            System.out.print("Unsaved changes to customer file. Exit without saving? Y/N: ");
-
-                            boolean yesNoLoop = true;
-                            while (yesNoLoop) {
-
-                                Scanner input = new Scanner(System.in);
-                                String response = input.nextLine();
-
-                                if (response.equalsIgnoreCase("n")) {
-                                    System.out.println();
-                                    yesNoLoop = false;
-                                    loop = true;
-                                } else if (response.equalsIgnoreCase("y")) {
-                                    System.out.printf("Changes not saved.%n%n");
-                                    yesNoLoop = false;
-                                } else {
-                                    System.out.print("Invalid input. Exit without saving? Y/N: ");
-                                }
-
-                            }
-
-                        }
 
                     } else {
                         System.out.printf("There are still %d customer(s) who have not checked out." +
@@ -520,6 +512,54 @@ public class Main implements InventoryMenu {
                     System.out.print("Failed to write file! Try again: ");
                 }
             }
+        }
+    }
+
+    /*
+    * NOTE: the following code implements the INSERTION SORT algorithm as described by Tom Scott in his YouTube
+    * video 'Why My Teenage Code Was Terrible: Sorting Algorithms And Big O Notation'
+    *
+    * URL: https://www.youtube.com/watch?v=RGuJga2Gl_k
+    *
+    * implementation is my own work, adapted from a previous recursion assignment
+    */
+
+    // helper method used by recursive sort method
+    public static LinkedList<Customer> insertSortHelper(CustomerData customerData) {
+        // converts list of customers into array
+        Customer[] tempArray = customerData.toCustomerArray();
+        // insertion sort algorithm, starting at index 0
+        for (int startIndex = 0; startIndex < tempArray.length; startIndex += 1) {
+            tempArray = insertSortRecursive(tempArray, startIndex);
+        }
+        // converts sorted array back to List and then returns as LinkedList
+        List<Customer> sortedCustomerList = Arrays.asList(tempArray);
+        return new LinkedList<>(sortedCustomerList);
+    }
+
+    // recursive insertion sort method
+    public static Customer[] insertSortRecursive(Customer[] customers, int startIndex) {
+        // for first run through list, makes no changes (otherwise the code would get an index out of bounds error
+        // for trying to compare to an index of -1
+        if (startIndex == 0) {
+            return customers;
+        }
+        // starting at index 1, compares each account number String lexicographically to the account number of the
+        // one before it
+        else if (customers[startIndex].getAccount_number().compareTo(customers[startIndex-1].getAccount_number())<0) {
+            // if the current account is 'smaller' than the one before it (i.e. has a .compareTo() value<0), then
+            // switch the position of the two accounts in the array
+            Customer a = customers[startIndex];
+            Customer b = customers[startIndex-1];
+            customers[startIndex-1] = a;
+            customers[startIndex]=b;
+            // then decrement the startIndex, comparing the newly switched account to its new index-1 neighbor
+            return insertSortRecursive(customers, startIndex - 1);
+        }
+        // base case, i.e. the recursive function has iterated through the entire list without finding an account out
+        // of order
+        else {
+            return customers;
         }
     }
 

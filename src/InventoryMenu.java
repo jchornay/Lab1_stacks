@@ -1,10 +1,10 @@
 /**
- * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
- * the user to check inventory and make changes at a TV warehouse.
+ * Lab 5: An inventory control program that implements stacks, queues, iterable lists, recursion, and trees in order to
+ * allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 21st, 2024
- * @version 1.4
+ * @version 1.5
+ * date April 11th, 2024
  */
 
 public interface InventoryMenu {

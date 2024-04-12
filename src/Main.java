@@ -1,10 +1,10 @@
 /**
- * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
- * the user to check inventory and make changes at a TV warehouse.
+ * Lab 5: An inventory control program that implements stacks, queues, iterable lists, recursion, and trees in order to
+ * allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 21st, 2024
- * @version 1.4
+ * @version 1.5
+ * date April 11th, 2024
  */
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.*;
 public class Main implements InventoryMenu {
     public static void main(String[] args) {
 
-        showHeader(4, "Recursion", "TV Inventory Control Program");
+        showHeader(5, "Trees", "TV Inventory Control Program");
 
         boolean loop = true;
 
@@ -24,20 +24,20 @@ public class Main implements InventoryMenu {
         Stack<TV> tvStack = openTVFile("stack.txt");
 
         // looks through IDs in TV stack to determine highest ID number as starting point for new IDs
-        int highest_ID=0;
-        for(TV tv: tvStack){
+        int highest_ID = 0;
+        for (TV tv : tvStack) {
             // initializes integer of ID to be compared
             int compare_ID;
             // isolates substring in ID number following the "-" symbol, assumed to be an integer
             String currentID = tv.getId_number().substring(tv.getId_number().lastIndexOf("-") + 1);
-            try{
+            try {
                 // attempts to parse substring as integer
                 compare_ID = Integer.parseInt(currentID);
                 // if successfully parsed AND number is higher than current highest, update highest ID number
-                if(compare_ID>highest_ID){
+                if (compare_ID > highest_ID) {
                     highest_ID = compare_ID;
                 }
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 // if unable to parse substring as integer, defaults highest ID number to number of TVs
                 highest_ID = tvStack.size() - 1;
             }
@@ -49,12 +49,12 @@ public class Main implements InventoryMenu {
         // sorts list in ascending order
         customerDataList.setList(insertSortHelper(customerDataList));
 
+
+        // initiates BinaryTree of TVType objects by calling static method to open file
+        BinaryTree tree = openTVTypeFile();
+
         // initiates queue of customer objects
         Queue<Customer> customerQueue = new LinkedList<>();
-
-        // NOTE: globalChangeCount made redundant after requiring a save after each new customer
-        // flag for when a customer specific action is initiated from main menu
-        //int globalChangeCount = 0;
 
         // main loop
         while (loop) {
@@ -134,7 +134,7 @@ public class Main implements InventoryMenu {
                             // requires list to be saved to file before proceeding
                             saveCustFile(customerDataList);
                             // NOTE: globalChangeCount made redundant after requiring a save after each new customer
-                            //globalChangeCount++;
+                            // globalChangeCount++;
                         } else if (customerDataList.findCustomer(accountNumberInput) == null) {
                             System.out.println("*** NO MATCH FOUND - ADD CUSTOMER ***");
                             customerDataList.addCustomer(accountNumberInput);
@@ -142,17 +142,51 @@ public class Main implements InventoryMenu {
                             customerDataList.setList(insertSortHelper(customerDataList));
                             // requires list to be saved to file before proceeding
                             saveCustFile(customerDataList);
-                            // NOTE: globalChangeCount made redundant after requiring a save after each new customer
-                            //globalChangeCount++;
                         }
 
                         Customer customer = customerDataList.findCustomer(accountNumberInput);
+                        TVType result = null;
 
                         if (customer != null) {
                             boolean purchase_loop = true;
                             int quantity = 0;
 
+                            System.out.printf("Customer is: %s", customer.getName());
+                            System.out.println();
+
                             while (purchase_loop) {
+
+                                boolean inner_purchase_loop = true;
+
+                                System.out.println();
+                                System.out.println("TV Options:");
+                                System.out.printf("%-8s%-18s%-18s%s%n", "Item", "Brand", "Model", "Cost");
+                                System.out.printf("%-8s%-18s%-18s%s%n", "----", "-----", "-----", "----");
+
+                                tree.helperTraverseInOrder();
+
+                                while (inner_purchase_loop) {
+                                    System.out.print("Please enter in the brand: ");
+                                    String brand = input.nextLine();
+                                    System.out.print("Please enter in the model: ");
+                                    String model = input.nextLine();
+
+                                    result = tree.helperRecursiveSearch(brand, model);
+
+                                    if (result == null) {
+                                        System.out.print("TV not found, try again! ");
+                                    } else {
+                                        customer.setTvType(result);
+                                        inner_purchase_loop = false;
+                                    }
+
+                                }
+
+                                System.out.printf("%-26s%s%n", "Item", "Cost");
+                                System.out.printf("%-26s%s%n", "-------------------", "----");
+                                System.out.printf("%-26s%s%n",
+                                        String.format("%s - %s", result.getBrand(), result.getModel()),
+                                        String.format("$%-4.2f", result.getPrice()));
 
                                 System.out.print("Please enter the number of TVs purchased: ");
 
@@ -161,7 +195,8 @@ public class Main implements InventoryMenu {
 
                                     if (quantity > tvStack.size()) {
                                         System.out.print("Error - Not enough TVs left in inventory!");
-                                        System.out.printf("%nTVs left in inventory: %d. Your purchase: %d TVs. Try again.%n", tvStack.size(), quantity);
+                                        System.out.printf("%nTVs left in inventory: %d. You purchased: %d. Try " +
+                                                "again.%n", tvStack.size(), quantity);
                                     } else if (quantity > 0) {
                                         purchase_loop = false;
                                     } else {
@@ -169,7 +204,6 @@ public class Main implements InventoryMenu {
                                     }
                                 } catch (NumberFormatException e) {
                                     System.out.printf("Error - Input must be positive integer! Try again.%n");
-
                                 }
 
                             }
@@ -179,10 +213,15 @@ public class Main implements InventoryMenu {
                             for (int i = 0; i < quantity; i++) {
                                 System.out.printf("\t" + tvStack.peek() + "%n");
                                 customer.setNumber_purchased(customer.getNumber_purchased() + 1);
-                                customer.getId_purchased().add(tvStack.pop());
+                                TV tv = tvStack.pop();
+                                tv.setTvType(result);
+                                customer.getId_purchased().add(tv);
                             }
 
-                            customerQueue.add(customer);
+                            if (!customerQueue.contains(customer)) {
+                                customerQueue.add(customer);
+                            }
+
                             System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
                         }
                     } else {
@@ -237,7 +276,7 @@ public class Main implements InventoryMenu {
                                 saveCustFile(customerDataList);
 
                                 // NOTE: globalChangeCount made redundant after requiring a save after each new customer
-                                //globalChangeCount = 0;
+                                // globalChangeCount = 0;
                                 localChangeCount = 0;
                             }
 
@@ -444,6 +483,36 @@ public class Main implements InventoryMenu {
         }
     }
 
+    // method to open TVType file
+
+    public static BinaryTree openTVTypeFile() {
+
+        BinaryTree tree = new BinaryTree();
+
+        boolean invalidFile = true;
+        while (invalidFile) {
+
+            Scanner input = new Scanner(System.in);
+            System.out.print("Please enter in the file path: ");
+
+            Path path = Paths.get(input.nextLine());
+
+            try (Scanner input_file = new Scanner(path)) {
+                // takes each line of input file and stores it as a separate TV
+                while (input_file.hasNext()) {
+                    TVType nextTVType = new TVType(input_file.nextLine(), input_file.nextLine(),
+                            Double.valueOf(input_file.nextLine()));
+                    tree.add(new Node(nextTVType));
+                }
+                invalidFile=false;
+            } catch (IOException error) {
+                System.out.printf("Error: File not found in local directory! Try again.%n");
+            }
+        }
+        return tree;
+    }
+
+
     // method to open customer file
     public static CustomerData openCustFile(String filePath) {
         Path path = Paths.get(filePath);
@@ -494,11 +563,11 @@ public class Main implements InventoryMenu {
         boolean loop = true;
 
         // validation loop
-        while(loop) {
+        while (loop) {
 
             String filePath = input.nextLine();
             // if file path does not end in ".txt", does not exit loop
-            if(filePath.lastIndexOf(".txt")!=filePath.length()-4) {
+            if (filePath.lastIndexOf(".txt") != filePath.length() - 4) {
                 System.out.print("Filename must end in .txt! Try again: ");
             } else {
                 // if filename DOES end in ".txt", attempts to save file
@@ -516,13 +585,13 @@ public class Main implements InventoryMenu {
     }
 
     /*
-    * NOTE: the following code implements the INSERTION SORT algorithm as described by Tom Scott in his YouTube
-    * video 'Why My Teenage Code Was Terrible: Sorting Algorithms And Big O Notation'
-    *
-    * URL: https://www.youtube.com/watch?v=RGuJga2Gl_k
-    *
-    * implementation is my own work, adapted from a previous recursion assignment
-    */
+     * NOTE: the following code implements the INSERTION SORT algorithm as described by Tom Scott in his YouTube
+     * video 'Why My Teenage Code Was Terrible: Sorting Algorithms And Big O Notation'
+     *
+     * URL: https://www.youtube.com/watch?v=RGuJga2Gl_k
+     *
+     * implementation is my own work, adapted from a previous recursion assignment
+     */
 
     // helper method used by recursive sort method
     public static LinkedList<Customer> insertSortHelper(CustomerData customerData) {
@@ -546,13 +615,13 @@ public class Main implements InventoryMenu {
         }
         // starting at index 1, compares each account number String lexicographically to the account number of the
         // one before it
-        else if (customers[startIndex].getAccount_number().compareTo(customers[startIndex-1].getAccount_number())<0) {
+        else if (customers[startIndex].getAccount_number().compareTo(customers[startIndex - 1].getAccount_number()) < 0) {
             // if the current account is 'smaller' than the one before it (i.e. has a .compareTo() value<0), then
             // switch the position of the two accounts in the array
             Customer a = customers[startIndex];
-            Customer b = customers[startIndex-1];
-            customers[startIndex-1] = a;
-            customers[startIndex]=b;
+            Customer b = customers[startIndex - 1];
+            customers[startIndex - 1] = a;
+            customers[startIndex] = b;
             // then decrement the startIndex, comparing the newly switched account to its new index-1 neighbor
             return insertSortRecursive(customers, startIndex - 1);
         }

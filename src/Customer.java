@@ -1,10 +1,10 @@
 /**
- * Lab 4: An inventory control program that implements stacks, queues, iterable lists, and recursion in order to allow
- * the user to check inventory and make changes at a TV warehouse.
+ * Lab 5: An inventory control program that implements stacks, queues, iterable lists, recursion, and trees in order to
+ * allow the user to check inventory and make changes at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @date March 21st, 2024
- * @version 1.4
+ * @date April 11th, 2024
+ * @version 1.5
  */
 
 import java.io.Serializable;
@@ -12,16 +12,26 @@ import java.util.ArrayList;
 
 public class Customer implements Serializable {
 
+    // instance variables
+    private String name;
+    private String account_number;
+    private int number_purchased;
+    private ArrayList<TV> id_purchased;
+
+    private TVType tvType;
+
     // NOTE: cost_purchased variable removed for being redundant, all instances replaced with
     // number_purchased*cost_per_TV
     public double cost_per_TV = 199.95 * 1.06;
 
+
     // default constructor, with empty ArrayList
     public Customer() {
-        this.name = "Sir Placeholder";
+        this.name = "Ima Placeholder";
         this.account_number = "ABC123-00";
         this.number_purchased = 0;
         this.id_purchased = new ArrayList<>();
+        this.tvType = null;
     }
 
     // partial constructor, with empty ArrayList
@@ -30,14 +40,16 @@ public class Customer implements Serializable {
         this.account_number = account_number;
         this.number_purchased = 0;
         this.id_purchased = new ArrayList<>();
+        this.tvType = null;
     }
 
     // full constructor
-    public Customer(String name, String account_number, int number_purchased, ArrayList<TV> id_purchased) {
+    public Customer(String name, String account_number, int number_purchased, ArrayList<TV> id_purchased, TVType tvType) {
         this.name = name;
         this.account_number = account_number;
         this.number_purchased = number_purchased;
         this.id_purchased = id_purchased;
+        this.tvType = tvType;
     }
 
     @Override
@@ -59,13 +71,13 @@ public class Customer implements Serializable {
             receipt.append(String.format("%nNo TVs purchased!"));
         // if purchases were made, iterates through ArrayList and prints each TV ID
         } else {
-            receipt.append(String.format("" +
-                            "%n*** PURCHASE ***" +
-                            "%n\t%d TV(s) for $%.2f", this.getNumber_purchased(),
-                    this.getNumber_purchased() * cost_per_TV));
+            double purchaseTotal = 0;
+            receipt.append(String.format("%n*** PURCHASE ***"));
             for (TV tv : this.getId_purchased()) {
                 receipt.append(String.format("%n\tTV ID Purchased is: %s", tv.getId_number()));
+                purchaseTotal+=tv.getTvType().getPrice();
             }
+            receipt.append(String.format("%n\t%d TV(s) for $%.2f", this.getNumber_purchased(), purchaseTotal));
         }
         //returns stringbuilder object as string
         return receipt.toString();
@@ -105,10 +117,12 @@ public class Customer implements Serializable {
         this.id_purchased = id_purchased;
     }
 
-    // instance variables
-    private String name;
-    private String account_number;
-    private int number_purchased;
-    private ArrayList<TV> id_purchased;
+    public TVType getTvType() {
+        return tvType;
+    }
+
+    public void setTvType(TVType tvType) {
+        this.tvType = tvType;
+    }
 
 }

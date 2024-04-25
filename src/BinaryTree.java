@@ -1,10 +1,10 @@
 /**
- * Lab 5: An inventory control program that implements stacks, queues, iterable lists, recursion, and trees in order to
- * allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 6: An inventory control program that implements stacks, queues, iterable lists, recursion, trees, and heaps in
+ * order to allow the user to access and modify TV inventory, customer accounts, transactions, and deliveries at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @version 1.5
- * date April 11th, 2024
+ * @version 1.6
+ * date April 25th, 2024
  */
 
 public class BinaryTree {

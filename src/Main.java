@@ -1,10 +1,10 @@
 /**
- * Lab 5: An inventory control program that implements stacks, queues, iterable lists, recursion, and trees in order to
- * allow the user to check inventory and make changes at a TV warehouse.
+ * Lab 6: An inventory control program that implements stacks, queues, iterable lists, recursion, trees, and heaps in
+ * order to allow the user to access and modify TV inventory, customer accounts, transactions, and deliveries at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @version 1.5
- * date April 11th, 2024
+ * @version 1.6
+ * date April 25th, 2024
  */
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.*;
 public class Main implements InventoryMenu {
     public static void main(String[] args) {
 
-        showHeader(5, "Trees", "TV Inventory Control Program");
+        showHeader(6, "Heaps", "TV Inventory Control Program");
 
         boolean loop = true;
 
@@ -49,7 +49,6 @@ public class Main implements InventoryMenu {
         // sorts list in ascending order
         customerDataList.setList(insertSortHelper(customerDataList));
 
-
         // initiates BinaryTree of TVType objects by calling static method to open file
         BinaryTree tree = openTVTypeFile();
 
@@ -59,36 +58,33 @@ public class Main implements InventoryMenu {
         // main loop
         while (loop) {
             switch (displayMainMenu()) {
+
                 // STOCK_SHELVES case: stocks given number of TVs (i.e. 5) on shelves
                 case InventoryMenu.STOCK_SHELVES -> {
                     if (tvStack.size() >= InventoryMenu.STOCKING_QUANTITY) {
-
                         System.out.printf("The following TVs have been placed on the floor for sale:%n");
-
                         // pops TVs off top of stack to be shelved
                         for (int i = 0; i < InventoryMenu.STOCKING_QUANTITY; i++) {
                             System.out.printf("\t" + tvStack.pop() + "%n");
                         }
-
                         System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
-
                         // displays error if not enough TVs (i.e. 5) are available
                     } else {
                         System.out.printf("Not enough TVs in inventory!%n%n");
                     }
                 }
+
                 // FILL_ORDER case: pops 1 TV off stack
                 case InventoryMenu.FILL_ORDER -> {
                     if (tvStack.size() > 0) {
-
                         System.out.printf("%nThe following TVs have been shipped:%n\t" + tvStack.pop() + "%n");
                         System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
-
                         // displays error if not enough TVs (i.e. 1) are available
                     } else {
                         System.out.printf("%nNot enough TVs in inventory!%n%n");
                     }
                 }
+
                 // RESTOCK_RETURN case: adds 1 TV to inventory with new ID
                 case InventoryMenu.RESTOCK_RETURN -> {
                     // creates a TV with a new ID using the number of TV's in the stack +1
@@ -101,6 +97,7 @@ public class Main implements InventoryMenu {
                     }
                     System.out.println();
                 }
+
                 // RESTOCK_INVENTORY case: adds given number of TVs (i.e. 5) to inventory
                 case InventoryMenu.RESTOCK_INVENTORY -> {
                     System.out.printf("%d TVs have been added to inventory%n", InventoryMenu.STOCKING_QUANTITY);
@@ -126,6 +123,7 @@ public class Main implements InventoryMenu {
                         System.out.print("Please enter account number or 'NONE': ");
                         String accountNumberInput = input.nextLine();
 
+                        // allows user to create new customer upon entering NONE
                         if (accountNumberInput.equalsIgnoreCase("none")) {
                             System.out.println("*** ADD CUSTOMER ***");
                             accountNumberInput = customerDataList.addCustomer();
@@ -133,8 +131,6 @@ public class Main implements InventoryMenu {
                             customerDataList.setList(insertSortHelper(customerDataList));
                             // requires list to be saved to file before proceeding
                             saveCustFile(customerDataList);
-                            // NOTE: globalChangeCount made redundant after requiring a save after each new customer
-                            // globalChangeCount++;
                         } else if (customerDataList.findCustomer(accountNumberInput) == null) {
                             System.out.println("*** NO MATCH FOUND - ADD CUSTOMER ***");
                             customerDataList.addCustomer(accountNumberInput);
@@ -144,49 +140,58 @@ public class Main implements InventoryMenu {
                             saveCustFile(customerDataList);
                         }
 
+                        // pulls customer from data list using account number as search term
                         Customer customer = customerDataList.findCustomer(accountNumberInput);
                         TVType result = null;
+                        int quantity = 0;
 
-                        if (customer != null) {
-                            boolean purchase_loop = true;
-                            int quantity = 0;
+                        System.out.printf("Customer is: %s", customer.getName());
+                        System.out.println();
 
-                            System.out.printf("Customer is: %s", customer.getName());
+                        boolean purchase_loop = true;
+                        while (purchase_loop) {
+
+                            // formatted menu
                             System.out.println();
+                            System.out.println("TV Options:");
+                            System.out.printf("%-8s%-18s%-18s%s%n", "Item", "Brand", "Model", "Cost");
+                            System.out.printf("%-8s%-18s%-18s%s%n", "----", "-----", "-----", "----");
 
-                            while (purchase_loop) {
+                            // traverses Binary Tree of TVTypes in order (cheapest to most expensive) and prints
+                            // formatted details
+                            tree.helperTraverseInOrder();
 
-                                boolean inner_purchase_loop = true;
+                            // validation loop to make sure user chooses existing brand/model combination
+                            boolean inner_purchase_loop = true;
+                            while (inner_purchase_loop) {
+                                System.out.print("Please enter in the brand: ");
+                                String brand = input.nextLine();
+                                System.out.print("Please enter in the model: ");
+                                String model = input.nextLine();
 
-                                System.out.println();
-                                System.out.println("TV Options:");
-                                System.out.printf("%-8s%-18s%-18s%s%n", "Item", "Brand", "Model", "Cost");
-                                System.out.printf("%-8s%-18s%-18s%s%n", "----", "-----", "-----", "----");
+                                // uses recursive search to see if exact brand/model exists in binary tree
+                                result = tree.helperRecursiveSearch(brand, model);
 
-                                tree.helperTraverseInOrder();
-
-                                while (inner_purchase_loop) {
-                                    System.out.print("Please enter in the brand: ");
-                                    String brand = input.nextLine();
-                                    System.out.print("Please enter in the model: ");
-                                    String model = input.nextLine();
-
-                                    result = tree.helperRecursiveSearch(brand, model);
-
-                                    if (result == null) {
-                                        System.out.print("TV not found, try again! ");
-                                    } else {
-                                        customer.setTvType(result);
-                                        inner_purchase_loop = false;
-                                    }
-
+                                // if not found, repeat loop until found
+                                if (result == null) {
+                                    System.out.print("TV not found, try again! ");
+                                // if found, exit loop
+                                } else {
+                                    customer.setTvType(result);
+                                    inner_purchase_loop = false;
                                 }
+                            }
 
-                                System.out.printf("%-26s%s%n", "Item", "Cost");
-                                System.out.printf("%-26s%s%n", "-------------------", "----");
-                                System.out.printf("%-26s%s%n",
-                                        String.format("%s - %s", result.getBrand(), result.getModel()),
-                                        String.format("$%-4.2f", result.getPrice()));
+                            // prints formatted summary of purchase
+                            System.out.printf("%-26s%s%n", "Item", "Cost");
+                            System.out.printf("%-26s%s%n", "-------------------", "----");
+                            System.out.printf("%-26s%s%n",
+                                    String.format("%s - %s", result.getBrand(), result.getModel()),
+                                    String.format("$%-4.2f", result.getPrice()));
+
+                            // validation loop to make sure user purchases valid quantity
+                            boolean inner_purchase_loop_2 = true;
+                            while(inner_purchase_loop_2) {
 
                                 System.out.print("Please enter the number of TVs purchased: ");
 
@@ -198,6 +203,7 @@ public class Main implements InventoryMenu {
                                         System.out.printf("%nTVs left in inventory: %d. You purchased: %d. Try " +
                                                 "again.%n", tvStack.size(), quantity);
                                     } else if (quantity > 0) {
+                                        inner_purchase_loop_2 = false;
                                         purchase_loop = false;
                                     } else {
                                         throw new NumberFormatException();
@@ -205,30 +211,35 @@ public class Main implements InventoryMenu {
                                 } catch (NumberFormatException e) {
                                     System.out.printf("Error - Input must be positive integer! Try again.%n");
                                 }
-
                             }
 
-                            System.out.printf("%nCustomer %s purchased the following TVs:%n", customer.getName());
-
-                            for (int i = 0; i < quantity; i++) {
-                                System.out.printf("\t" + tvStack.peek() + "%n");
-                                customer.setNumber_purchased(customer.getNumber_purchased() + 1);
-                                TV tv = tvStack.pop();
-                                tv.setTvType(result);
-                                customer.getId_purchased().add(tv);
-                            }
-
-                            if (!customerQueue.contains(customer)) {
-                                customerQueue.add(customer);
-                            }
-
-                            System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
                         }
+
+                        System.out.printf("%nCustomer %s purchased the following TVs:%n", customer.getName());
+
+                        // prints formatted summary of purchase
+                        for (int i = 0; i < quantity; i++) {
+                            System.out.printf("\t" + tvStack.peek() + "%n");
+                            customer.setNumber_purchased(customer.getNumber_purchased() + 1);
+                            TV tv = tvStack.pop();
+                            tv.setTvType(result);
+                            customer.getId_purchased().add(tv);
+                        }
+
+                        // adds customer to checkout queue if not already present (this check allows for more than
+                        // one transaction per customer)
+                        if (!customerQueue.contains(customer)) {
+                            customerQueue.add(customer);
+                        }
+
+                        System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
+
                     } else {
                         System.out.printf("There are no TVs left in inventory!%n%n");
                     }
                 }
 
+                // CUSTOMER_CHECKOUT case: allows customers to be checked out one at a time
                 case InventoryMenu.CUSTOMER_CHECKOUT -> {
                     if (customerQueue.isEmpty()) {
                         System.out.printf("There are no customers left to check out!%n%n");
@@ -238,6 +249,7 @@ public class Main implements InventoryMenu {
                     }
                 }
 
+                // CUSTOMER_UPDATE case: allows customer edit menu to be accessed
                 case InventoryMenu.CUSTOMER_UPDATE -> {
 
                     boolean innerLoop = true;
@@ -274,17 +286,14 @@ public class Main implements InventoryMenu {
                             case InventoryMenu.SAVE_TO_FILE -> {
 
                                 saveCustFile(customerDataList);
-
-                                // NOTE: globalChangeCount made redundant after requiring a save after each new customer
-                                // globalChangeCount = 0;
                                 localChangeCount = 0;
                             }
 
                             case InventoryMenu.DISPLAY_LIST -> {
 
                                 customerDataList.displayList();
-
                             }
+
                             case InventoryMenu.RETURN_TO_MAIN -> {
 
                                 if (localChangeCount > 0) {
@@ -319,6 +328,7 @@ public class Main implements InventoryMenu {
                     }
                 }
 
+                // DISPLAY_INVENTORY case: displays formatted version of inventory
                 case InventoryMenu.DISPLAY_INVENTORY -> {
                     // uses the inherent toString() method to show TV's left in stack
                     System.out.printf("The following %d TVs are left in inventory:%n", tvStack.size());
@@ -327,6 +337,8 @@ public class Main implements InventoryMenu {
                     }
                     System.out.println();
                 }
+
+                // END case: checks that all customers have been checked out, then saves inventory file and ends program
                 case InventoryMenu.END -> {
 
                     if (customerQueue.isEmpty()) {

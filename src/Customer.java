@@ -17,13 +17,11 @@ public class Customer implements Serializable {
     private String account_number;
     private int number_purchased;
     private ArrayList<TV> id_purchased;
-
     private TVType tvType;
 
     // NOTE: cost_purchased variable removed for being redundant, all instances replaced with
     // number_purchased*cost_per_TV
     public double cost_per_TV = 199.95 * 1.06;
-
 
     // default constructor, with empty ArrayList
     public Customer() {
@@ -88,7 +86,6 @@ public class Customer implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -96,7 +93,6 @@ public class Customer implements Serializable {
     public String getAccount_number() {
         return account_number;
     }
-
     public void setAccount_number(String account_number) {
         this.account_number = account_number;
     }
@@ -104,7 +100,6 @@ public class Customer implements Serializable {
     public int getNumber_purchased() {
         return number_purchased;
     }
-
     public void setNumber_purchased(int number_purchased) {
         this.number_purchased = number_purchased;
     }
@@ -112,7 +107,6 @@ public class Customer implements Serializable {
     public ArrayList<TV> getId_purchased() {
         return id_purchased;
     }
-
     public void setId_purchased(ArrayList<TV> id_purchased) {
         this.id_purchased = id_purchased;
     }
@@ -120,9 +114,7 @@ public class Customer implements Serializable {
     public TVType getTvType() {
         return tvType;
     }
-
     public void setTvType(TVType tvType) {
         this.tvType = tvType;
     }
-
 }

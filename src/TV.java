@@ -11,7 +11,6 @@ public class TV {
 
     // TV id number
     private String id_number;
-
     // TVType object
     private TVType tvType;
 
@@ -19,7 +18,6 @@ public class TV {
     public String getId_number() {
         return id_number;
     }
-
     public void setId_number(String id_number) {
         this.id_number = id_number;
     }
@@ -27,7 +25,6 @@ public class TV {
     public TVType getTvType() {
         return tvType;
     }
-
     public void setTvType(TVType tvType) {
         this.tvType = tvType;
     }

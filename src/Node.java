@@ -16,18 +16,15 @@ public class Node {
 
     // constructor that creates new Node with tvType object and no child nodes
     public Node(TVType tvType) {
-
         this.tvType = tvType;
         this.leftChild = null;
         this.rightChild = null;
-
     }
 
     // getters and setters
     public TVType getTvType() {
         return tvType;
     }
-
     public void setTvType(TVType tvType) {
         this.tvType = tvType;
     }
@@ -35,7 +32,6 @@ public class Node {
     public Node getLeftChild() {
         return leftChild;
     }
-
     public void setLeftChild(Node leftChild) {
         this.leftChild = leftChild;
     }
@@ -43,9 +39,7 @@ public class Node {
     public Node getRightChild() {
         return rightChild;
     }
-
     public void setRightChild(Node rightChild) {
         this.rightChild = rightChild;
     }
-
 }

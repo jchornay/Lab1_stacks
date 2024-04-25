@@ -44,7 +44,6 @@ public class CustomerData implements Iterable<Customer>, Serializable {
                 // exits loop once new account number is chosen
                 loop = false;
             }
-
         }
 
         // creates a new customer object with name and account number
@@ -57,7 +56,6 @@ public class CustomerData implements Iterable<Customer>, Serializable {
         } else {
             System.out.printf("Action cancelled.%n%n");
         }
-
         return account;
     }
 
@@ -156,7 +154,6 @@ public class CustomerData implements Iterable<Customer>, Serializable {
         } else {
             System.out.printf("Action cancelled.%n%n");
         }
-
     }
 
     // method to find if account exists in list (returns null if unable to find account)
@@ -228,5 +225,4 @@ public class CustomerData implements Iterable<Customer>, Serializable {
     public Iterator<Customer> iterator() {
         return this.list.iterator();
     }
-
 }

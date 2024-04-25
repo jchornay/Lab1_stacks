@@ -212,7 +212,6 @@ public class Main implements InventoryMenu {
                                     System.out.printf("Error - Input must be positive integer! Try again.%n");
                                 }
                             }
-
                         }
 
                         System.out.printf("%nCustomer %s purchased the following TVs:%n", customer.getName());
@@ -231,7 +230,6 @@ public class Main implements InventoryMenu {
                         if (!customerQueue.contains(customer)) {
                             customerQueue.add(customer);
                         }
-
                         System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
 
                     } else {
@@ -351,13 +349,10 @@ public class Main implements InventoryMenu {
                     }
                 }
             }
-
         }
-
         System.out.println("Saving inventory file...");
         saveTVFile(tvStack, "stack.txt");
         System.out.println("Thank you for using ACME inventory control.");
-
     }
 
     // method to display main menu, validate selection, and return selection as integer
@@ -496,7 +491,6 @@ public class Main implements InventoryMenu {
     }
 
     // method to open TVType file
-
     public static BinaryTree openTVTypeFile() {
 
         BinaryTree tree = new BinaryTree();
@@ -620,23 +614,28 @@ public class Main implements InventoryMenu {
 
     // recursive insertion sort method
     public static Customer[] insertSortRecursive(Customer[] customers, int startIndex) {
+
         // for first run through list, makes no changes (otherwise the code would get an index out of bounds error
         // for trying to compare to an index of -1
         if (startIndex == 0) {
             return customers;
         }
+
         // starting at index 1, compares each account number String lexicographically to the account number of the
         // one before it
         else if (customers[startIndex].getAccount_number().compareTo(customers[startIndex - 1].getAccount_number()) < 0) {
+
             // if the current account is 'smaller' than the one before it (i.e. has a .compareTo() value<0), then
             // switch the position of the two accounts in the array
             Customer a = customers[startIndex];
             Customer b = customers[startIndex - 1];
             customers[startIndex - 1] = a;
             customers[startIndex] = b;
+
             // then decrement the startIndex, comparing the newly switched account to its new index-1 neighbor
             return insertSortRecursive(customers, startIndex - 1);
         }
+
         // base case, i.e. the recursive function has iterated through the entire list without finding an account out
         // of order
         else {
@@ -650,7 +649,5 @@ public class Main implements InventoryMenu {
         System.out.printf("Lab %d: %s%n", labNum, labName);
         System.out.println("Copyright ©2024 - Howard Community College. All rights reserved; Unauthorized duplication prohibited");
         System.out.printf("CMSY 265 %s%n%n", labTitle);
-
     }
-
 }

@@ -37,9 +37,7 @@ public class BinaryTree {
     // method that calls recursive helper function to add node to existing tree,
     // or create new root node if tree is empty
     public void add(Node newNode) {
-
         root = addRecursive(root, newNode);
-
     }
 
     // recursive helper method for adding node to binary tree
@@ -83,7 +81,6 @@ public class BinaryTree {
             System.out.printf("%-8d%s%n", this.getIndex(), node.getTvType().toString());
             recursiveTraverseInOrder(node.getRightChild());
         }
-
     }
 
     // helper method for recursive search which resets searchResult every time method is called (when i attempted to
@@ -110,7 +107,6 @@ public class BinaryTree {
     public Node getRoot() {
         return root;
     }
-
     public void setRoot(Node root) {
         this.root = root;
     }
@@ -118,7 +114,6 @@ public class BinaryTree {
     public static Boolean getIsFound() {
         return isFound;
     }
-
     public static void setIsFound(Boolean isFound) {
         BinaryTree.isFound = isFound;
     }
@@ -126,7 +121,6 @@ public class BinaryTree {
     public Integer getIndex() {
         return index;
     }
-
     public void setIndex(Integer index) {
         this.index = index;
     }
@@ -134,9 +128,7 @@ public class BinaryTree {
     public TVType getSearchResult() {
         return searchResult;
     }
-
     public void setSearchResult(TVType searchResult) {
         this.searchResult = searchResult;
     }
-
 }

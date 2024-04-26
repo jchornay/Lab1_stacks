@@ -17,8 +17,9 @@ public interface InventoryMenu {
     int CUSTOMER_UPDATE = 5;
     int CUSTOMER_PURCHASE = 6;
     int CUSTOMER_CHECKOUT = 7;
-    int DISPLAY_INVENTORY = 8;
-    int END = 9;
+    int DISPLAY_DELIVERY = 8;
+    int DISPLAY_INVENTORY = 9;
+    int END = 10;
 
     // quantity used in STOCK_SHELVES action
     int STOCKING_QUANTITY = 5;
@@ -30,5 +31,8 @@ public interface InventoryMenu {
     int SAVE_TO_FILE = 4;
     int DISPLAY_LIST = 5;
     int RETURN_TO_MAIN = 6;
+
+    // delivery variables
+    int MAXIMUM_DELIVERIES = 25;
 
 }

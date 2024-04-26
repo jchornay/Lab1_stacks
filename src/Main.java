@@ -7,6 +7,7 @@
  * date April 25th, 2024
  */
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -49,11 +50,14 @@ public class Main implements InventoryMenu {
         // sorts list in ascending order
         customerDataList.setList(insertSortHelper(customerDataList));
 
-        // initiates BinaryTree of TVType objects by calling static method to open file
-        BinaryTree tree = openTVTypeFile();
-
         // initiates queue of customer objects
         Queue<Customer> customerQueue = new LinkedList<>();
+        // initiates binary tree
+        BinaryTree tree = null;
+
+
+        boolean firstPurchase = true;
+
 
         // main loop
         while (loop) {
@@ -115,8 +119,17 @@ public class Main implements InventoryMenu {
 
                 // CUSTOMER_PURCHASE case: allows selection (or creation) of customer account and allows TV purchase
                 case InventoryMenu.CUSTOMER_PURCHASE -> {
+
+
+                    // initiates BinaryTree of TVType objects by calling static method to open file
+                    if(firstPurchase){
+                        tree = openTVTypeFile();
+                        firstPurchase = false;
+                    }
+
                     if (tvStack.size() > 0) {
 
+                        System.out.println();
                         customerDataList.displayList();
 
                         Scanner input = new Scanner(System.in);
@@ -145,95 +158,115 @@ public class Main implements InventoryMenu {
                         TVType result = null;
                         int quantity = 0;
 
-                        System.out.printf("Customer is: %s", customer.getName());
-                        System.out.println();
+                        if (customer != null) {
 
-                        boolean purchase_loop = true;
-                        while (purchase_loop) {
-
-                            // formatted menu
+                            System.out.printf("Customer is: %s", customer.getName());
                             System.out.println();
-                            System.out.println("TV Options:");
-                            System.out.printf("%-8s%-18s%-18s%s%n", "Item", "Brand", "Model", "Cost");
-                            System.out.printf("%-8s%-18s%-18s%s%n", "----", "-----", "-----", "----");
 
-                            // traverses Binary Tree of TVTypes in order (cheapest to most expensive) and prints
-                            // formatted details
-                            tree.helperTraverseInOrder();
+                            boolean purchase_loop = true;
+                            while (purchase_loop) {
 
-                            // validation loop to make sure user chooses existing brand/model combination
-                            boolean inner_purchase_loop = true;
-                            while (inner_purchase_loop) {
-                                System.out.print("Please enter in the brand: ");
-                                String brand = input.nextLine();
-                                System.out.print("Please enter in the model: ");
-                                String model = input.nextLine();
+                                // formatted menu
+                                System.out.println();
+                                System.out.println("TV Options:");
+                                System.out.printf("%-8s%-18s%-18s%s%n", "Item", "Brand", "Model", "Cost");
+                                System.out.printf("%-8s%-18s%-18s%s%n", "----", "-----", "-----", "----");
 
-                                // uses recursive search to see if exact brand/model exists in binary tree
-                                result = tree.helperRecursiveSearch(brand, model);
+                                // traverses Binary Tree of TVTypes in order (cheapest to most expensive) and prints
+                                // formatted details
+                                tree.helperTraverseInOrder();
 
-                                // if not found, repeat loop until found
-                                if (result == null) {
-                                    System.out.print("TV not found, try again! ");
-                                // if found, exit loop
-                                } else {
-                                    customer.setTvType(result);
-                                    inner_purchase_loop = false;
+                                // validation loop to make sure user chooses existing brand/model combination
+                                boolean inner_purchase_loop = true;
+                                while (inner_purchase_loop) {
+                                    System.out.print("Please enter in the brand: ");
+                                    String brand = input.nextLine();
+                                    System.out.print("Please enter in the model: ");
+                                    String model = input.nextLine();
+
+                                    // uses recursive search to see if exact brand/model exists in binary tree
+                                    result = tree.helperRecursiveSearch(brand, model);
+
+                                    // if not found, repeat loop until found
+                                    if (result == null) {
+                                        System.out.print("TV not found, try again! ");
+                                        // if found, exit loop
+                                    } else {
+                                        customer.setTvType(result);
+                                        inner_purchase_loop = false;
+                                    }
+                                }
+
+                                // prints formatted summary of purchase
+                                System.out.printf("%-26s%s%n", "Item", "Cost");
+                                System.out.printf("%-26s%s%n", "-------------------", "----");
+                                System.out.printf("%-26s%s%n",
+                                        String.format("%s - %s", result.getBrand(), result.getModel()),
+                                        String.format("$%-4.2f", result.getPrice()));
+
+                                // validation loop to make sure user purchases valid quantity
+                                boolean inner_purchase_loop_2 = true;
+                                while (inner_purchase_loop_2) {
+
+                                    System.out.print("Please enter the number of TVs purchased: ");
+
+                                    try {
+                                        quantity = Integer.parseInt(input.nextLine());
+
+                                        if (quantity > tvStack.size()) {
+                                            System.out.print("Error - Not enough TVs left in inventory!");
+                                            System.out.printf("%nTVs left in inventory: %d. You purchased: %d. Try " +
+                                                    "again.%n", tvStack.size(), quantity);
+                                        } else if (quantity > 0) {
+                                            inner_purchase_loop_2 = false;
+                                            purchase_loop = false;
+                                        } else {
+                                            throw new NumberFormatException();
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        System.out.printf("Error - Input must be positive integer! Try again.%n");
+                                    }
                                 }
                             }
+
+                            System.out.printf("%nCustomer %s purchased the following TVs:%n", customer.getName());
 
                             // prints formatted summary of purchase
-                            System.out.printf("%-26s%s%n", "Item", "Cost");
-                            System.out.printf("%-26s%s%n", "-------------------", "----");
-                            System.out.printf("%-26s%s%n",
-                                    String.format("%s - %s", result.getBrand(), result.getModel()),
-                                    String.format("$%-4.2f", result.getPrice()));
+                            for (int i = 0; i < quantity; i++) {
+                                System.out.printf("\t" + tvStack.peek() + "%n");
+                                customer.setNumber_purchased(customer.getNumber_purchased() + 1);
+                                TV tv = tvStack.pop();
+                                tv.setTvType(result);
+                                customer.getId_purchased().add(tv);
+                            }
 
-                            // validation loop to make sure user purchases valid quantity
-                            boolean inner_purchase_loop_2 = true;
-                            while(inner_purchase_loop_2) {
-
-                                System.out.print("Please enter the number of TVs purchased: ");
-
-                                try {
-                                    quantity = Integer.parseInt(input.nextLine());
-
-                                    if (quantity > tvStack.size()) {
-                                        System.out.print("Error - Not enough TVs left in inventory!");
-                                        System.out.printf("%nTVs left in inventory: %d. You purchased: %d. Try " +
-                                                "again.%n", tvStack.size(), quantity);
-                                    } else if (quantity > 0) {
-                                        inner_purchase_loop_2 = false;
-                                        purchase_loop = false;
-                                    } else {
-                                        throw new NumberFormatException();
-                                    }
-                                } catch (NumberFormatException e) {
-                                    System.out.printf("Error - Input must be positive integer! Try again.%n");
+                            boolean deliveryLoop = true;
+                            while(deliveryLoop) {
+                                System.out.print("Does the customer want the TVs delivered? y/n: ");
+                                String response = input.nextLine();
+                                if (response.equalsIgnoreCase("y")) {
+                                    System.out.print("Please enter customer address: ");
+                                    appendDelInfoFile(customer.getName(), input.nextLine(),
+                                            customer.getAccount_number(),
+                                            customer.getNumber_purchased());
+                                    deliveryLoop = false;
+                                } else if(response.equalsIgnoreCase("n")){
+                                    deliveryLoop = false;
+                                } else {
+                                    System.out.println("Please type 'y' or 'n': ");
                                 }
                             }
+
+                            // adds customer to checkout queue if not already present (this check allows for more than
+                            // one transaction per customer)
+                            if (!customerQueue.contains(customer)) {
+                                customerQueue.add(customer);
+                            }
+                            System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
                         }
-
-                        System.out.printf("%nCustomer %s purchased the following TVs:%n", customer.getName());
-
-                        // prints formatted summary of purchase
-                        for (int i = 0; i < quantity; i++) {
-                            System.out.printf("\t" + tvStack.peek() + "%n");
-                            customer.setNumber_purchased(customer.getNumber_purchased() + 1);
-                            TV tv = tvStack.pop();
-                            tv.setTvType(result);
-                            customer.getId_purchased().add(tv);
-                        }
-
-                        // adds customer to checkout queue if not already present (this check allows for more than
-                        // one transaction per customer)
-                        if (!customerQueue.contains(customer)) {
-                            customerQueue.add(customer);
-                        }
-                        System.out.printf("\tThere are %d TVs left in inventory.%n%n", tvStack.size());
-
-                    } else {
-                        System.out.printf("There are no TVs left in inventory!%n%n");
+                    }
+                    else {
+                        System.out.printf("%nThere are no TVs left in inventory!%n%n");
                     }
                 }
 
@@ -326,10 +359,28 @@ public class Main implements InventoryMenu {
                     }
                 }
 
+                case DISPLAY_DELIVERY -> {
+
+                    MaxHeap delInfo = openDelInfoFile();
+
+                    int i = 0;
+                    System.out.println();
+                    System.out.println("Delivery Report");
+                    System.out.println("---------------");
+                    while(delInfo.getCurrentSize()>1){
+                        System.out.printf("Delivery Stop #%d:%n", ++i);
+                        DelInfo display = delInfo.removeRoot();
+                        System.out.println(display);
+                    }
+
+                    System.out.println();
+
+                }
+
                 // DISPLAY_INVENTORY case: displays formatted version of inventory
                 case InventoryMenu.DISPLAY_INVENTORY -> {
                     // uses the inherent toString() method to show TV's left in stack
-                    System.out.printf("The following %d TVs are left in inventory:%n", tvStack.size());
+                    System.out.printf("%nThe following %d TVs are left in inventory:%n", tvStack.size());
                     for (TV tv : tvStack) {
                         System.out.printf("\t" + tv + "%n");
                     }
@@ -367,6 +418,7 @@ public class Main implements InventoryMenu {
                         "%n%d - Customer Update" +
                         "%n%d - Customer Purchase" +
                         "%n%d - Customer Checkout" +
+                        "%n%d - Display Delivery List" +
                         "%n%d - Display Inventory" +
                         "%n%d - End Program",
                 InventoryMenu.STOCK_SHELVES,
@@ -376,6 +428,7 @@ public class Main implements InventoryMenu {
                 InventoryMenu.CUSTOMER_UPDATE,
                 InventoryMenu.CUSTOMER_PURCHASE,
                 InventoryMenu.CUSTOMER_CHECKOUT,
+                InventoryMenu.DISPLAY_DELIVERY,
                 InventoryMenu.DISPLAY_INVENTORY,
                 InventoryMenu.END);
         //@formatter:on
@@ -401,7 +454,6 @@ public class Main implements InventoryMenu {
                 System.out.printf("Input must be valid integer between %d and %d! Try again: ", InventoryMenu.STOCK_SHELVES, InventoryMenu.END);
             }
         }
-        System.out.println();
         return result;
     }
 
@@ -445,7 +497,6 @@ public class Main implements InventoryMenu {
                 System.out.printf("Input must be valid integer between %d and %d! Try again: ", InventoryMenu.ADD_CUSTOMER, InventoryMenu.RETURN_TO_MAIN);
             }
         }
-        System.out.println();
         return result;
     }
 
@@ -499,7 +550,7 @@ public class Main implements InventoryMenu {
         while (invalidFile) {
 
             Scanner input = new Scanner(System.in);
-            System.out.print("Please enter in the file path: ");
+            System.out.print("Please enter in the file path for TV type data (.txt): ");
 
             Path path = Paths.get(input.nextLine());
 
@@ -516,6 +567,81 @@ public class Main implements InventoryMenu {
             }
         }
         return tree;
+    }
+
+    // method to open DelInfo file
+    public static MaxHeap openDelInfoFile() {
+
+        MaxHeap heap = new MaxHeap(InventoryMenu.MAXIMUM_DELIVERIES);
+
+        boolean invalidFile = true;
+        while (invalidFile) {
+
+            Scanner input = new Scanner(System.in);
+            System.out.print("Please enter in the delivery info file path (.txt): ");
+
+            Path path = Paths.get(input.nextLine());
+
+            try (Scanner input_file = new Scanner(path)) {
+                // takes each line of input file and stores it as a separate TV
+                while (input_file.hasNext()) {
+                    DelInfo delInfo = new DelInfo(input_file.nextLine(), input_file.nextLine(), input_file.nextLine()
+                            , Integer.valueOf(input_file.nextLine()));
+                    heap.insertNode(delInfo);
+                }
+                invalidFile=false;
+            } catch (IOException error) {
+                System.out.printf("Error: File not found in local directory! Try again.%n");
+            }
+        }
+
+        heap.constructMaxHeap();
+        return heap;
+    }
+
+    // method to append data to DelInfo file
+    public static void appendDelInfoFile(String newName, String newAddress, String newAccount, int newNumPurchased) {
+
+        // creates stringbuilder object as basis for output file
+        StringBuilder output = new StringBuilder();
+        String filePath = null;
+
+        boolean invalidFile = true;
+        while (invalidFile) {
+
+            Scanner input = new Scanner(System.in);
+            System.out.print("Please enter in the delivery info file path (.txt): ");
+
+            filePath = input.nextLine();
+            Path path = Paths.get(filePath);
+
+            try (Scanner input_file = new Scanner(path)) {
+                // takes each line of input file and appends it to file
+                while (input_file.hasNext()) {
+                    output.append(input_file.nextLine());
+                    output.append("\n");
+                }
+                invalidFile=false;
+            } catch (IOException error) {
+                System.out.printf("Error: File not found in local directory! Try again.%n");
+            }
+        }
+
+        output.append(newName);
+        output.append("\n");
+        output.append(newAddress);
+        output.append("\n");
+        output.append(newAccount);
+        output.append("\n");
+        output.append(newNumPurchased);
+
+        try (PrintWriter outputFile = new PrintWriter(filePath)) {
+            outputFile.print(output);
+            System.out.printf("File saved.%n%n");
+        } catch (IOException e) {
+            // redundant catch block because same filepath is used in previous try/catch block for reading file, no
+            // additional validation needed
+        }
     }
 
 

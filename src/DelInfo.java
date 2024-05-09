@@ -1,10 +1,11 @@
 /**
- * Lab 6: An inventory control program that implements stacks, queues, iterable lists, recursion, trees, and heaps in
- * order to allow the user to access and modify TV inventory, customer accounts, transactions, and deliveries at a TV warehouse.
+ * Lab 7: An inventory control program that implements stacks, queues, iterable lists, recursion, trees, heaps, sets,
+ * and maps in order to allow the user to access and modify TV inventory, customer accounts, transactions, and
+ * deliveries at a TV warehouse.
  *
  * @author Jonathan Chornay
- * @version 1.6
- * date April 25th, 2024
+ * @version 1.7
+ * date May 9th, 2024
  */
 
 public class DelInfo {
@@ -38,21 +39,18 @@ public class DelInfo {
     public void setName(String name) {
         this.name = name;
     }
-
     public String getAccountNumber() {
         return accountNumber;
     }
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
-
     public String getAddress() {
         return address;
     }
     public void setAddress(String address) {
         this.address = address;
     }
-
     public int getNumberPurchased() {
         return numberPurchased;
     }
@@ -60,7 +58,6 @@ public class DelInfo {
         this.numberPurchased = numberPurchased;
     }
 
-    //TODO: toString method
     @Override
     public String toString(){
         return String.format("Name: %s\t\tAccount: %s%nAddress: %s%nTVs Purchased: %d%n", this.getName(),

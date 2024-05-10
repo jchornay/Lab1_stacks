@@ -33,13 +33,13 @@ public class MaxHeap {
     }
 
     // node variables such that location of parent and children is defined mathematically
-    private int parent(int currentIndex){return currentIndex/2;}
+    private int parent(int currentIndex){return (currentIndex)/2;}
     private int leftChild(int currentIndex){return 2*currentIndex;}
     private int rightChild(int currentIndex){return (2*currentIndex)+1;}
     // returns true if current index is located in 'second half' of heap, essentially ensuring that it is a leaf node
     // based off the inherent organizational structure
     private boolean isLeaf(int currentIndex) {
-        return (currentIndex > (currentSize/2) && currentIndex <= currentSize);
+        return (currentIndex >= ((currentSize)/2) && currentIndex <= (currentSize));
     }
 
     // swaps DelInfo objects at indexA and indexB
@@ -73,6 +73,15 @@ public class MaxHeap {
 
     //
     private void maxHeapify(int currentIndex) {
+
+        /*
+        System.out.printf("%nCURRENT INDEX: %d", currentIndex);
+        for (int i = 1; i <= currentSize; i++) {
+            System.out.printf("%n[%d] %d", i, heap[i].getNumberPurchased());
+        }
+        System.out.println();
+         */
+
         if(!isLeaf(currentIndex)) {
 
             // checks if value at current index is less than either of its children (since this is a max heap, it
@@ -100,7 +109,7 @@ public class MaxHeap {
     // starts heapifying the array in the middle, since the organizational structure guarantees everything after the
     // middle to be a leaf
     public void constructMaxHeap(){
-        for (int index = (currentSize / 2); index >= 0; index-=1) {
+        for (int index = ((currentSize) / 2); index >= 1; index-=1) {
             maxHeapify(index);
         }
     }
@@ -109,7 +118,7 @@ public class MaxHeap {
     public DelInfo removeRoot()  {
         DelInfo rootElement = heap[1];
         heap[1] = heap[currentSize];
-        currentSize -= 1;
+        currentSize-=1;
         maxHeapify(1);
         return rootElement;
     }

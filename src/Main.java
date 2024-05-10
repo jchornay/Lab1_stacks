@@ -56,9 +56,7 @@ public class Main implements InventoryMenu {
         // initiates binary tree
         BinaryTree tree = null;
 
-
         boolean firstPurchase = true;
-
 
         // main loop
         while (loop) {
@@ -90,18 +88,16 @@ public class Main implements InventoryMenu {
                     }
                 }
 
-                // RESTOCK_RETURN case: adds 1 TV to inventory with new ID
+                // RESTOCK_RETURN case: loads data file of TVs sold and gives user option to return TV by ID
                 case InventoryMenu.RESTOCK_RETURN -> {
-                    // creates a TV with a new ID using the number of TV's in the stack +1
-                    highest_ID += 1;
-                    tvStack.push(new TV("ABC123-" + highest_ID));
-                    System.out.printf("Returned TV added to inventory.%n");
-                    System.out.printf("The following %d TVs are left in inventory:%n", tvStack.size());
-                    for (TV tv : tvStack) {
-                        System.out.printf("\t" + tv + "%n");
-                    }
+
+                    TVReturn TVreturn = new TVReturn();
+                    tvStack.push(TVreturn.lookup());
                     System.out.println();
+                    saveTVFile(tvStack, "stack.txt");
+
                 }
+
 
                 // RESTOCK_INVENTORY case: adds given number of TVs (i.e. 5) to inventory
                 case InventoryMenu.RESTOCK_INVENTORY -> {
@@ -120,7 +116,6 @@ public class Main implements InventoryMenu {
 
                 // CUSTOMER_PURCHASE case: allows selection (or creation) of customer account and allows TV purchase
                 case InventoryMenu.CUSTOMER_PURCHASE -> {
-
 
                     // initiates BinaryTree of TVType objects by calling static method to open file
                     if(firstPurchase){
@@ -360,6 +355,8 @@ public class Main implements InventoryMenu {
                     }
                 }
 
+                // DISPLAY_DELIVERY CASE: loads delivery info file as MaxHeap and prints heap from front to back
+                // (most TVs to least TVs)
                 case DISPLAY_DELIVERY -> {
 
                     MaxHeap delInfo = openDelInfoFile();
@@ -375,7 +372,6 @@ public class Main implements InventoryMenu {
                     }
 
                     System.out.println();
-
                 }
 
                 // DISPLAY_INVENTORY case: displays formatted version of inventory
